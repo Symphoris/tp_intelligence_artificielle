@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	</head>
+	<body>
+		<h1 id="object-implementation-of-candidate-elimination-algorithm">Object implementation of Candidate Elimination algorithm</h1>
+		<hr/>
+		<p>The problem is to learn a function mapping examples into two classes: positive and negative. We are given a database of examples already classified as positive or negative.
+			Concept learning: the process of inducing a function mapping input examples into a Boolean output. </p>
+		<h2 id="overview-of-the-data">Overview of the data</h2>
+		<hr/>
+		<p>This data set consists of 101 animals from a zoo. There are 
+			<strong>16 variables</strong> with various traits to describe the animals. The 
+			<strong>7 Class Types</strong> are: Mammal, Bird, Reptile, Fish, Amphibian, Bug and Invertebrate
+		</p>
+		<p>The purpose for this data set is to be able to predict the classification of the animals, based upon the variables. 
+			There are 2 files:</p>
+		<ul>
+			<li>zoo.csv: attribute Information: (name of attribute and type of value domain)</li>
+			<ul>
+				<li>animal_name: Unique for each instance</li>
+				<li>hair Boolean</li>
+				<li>feathers Boolean</li>
+				<li>eggs Boolean</li>
+				<li>milk Boolean</li>
+				<li>airborne Boolean</li>
+				<li>aquatic Boolean</li>
+				<li>predator Boolean</li>
+				<li>toothed Boolean</li>
+				<li>backbone Boolean</li>
+				<li>breathes Boolean</li>
+				<li>venomous Boolean</li>
+				<li>fins Boolean</li>
+				<li>legs Numeric (set of values: {0,2,4,5,6,8})</li>
+				<li>tail Boolean</li>
+				<li>domestic Boolean</li>
+				<li>catsize Boolean</li>
+				<li>class_type Numeric (integer values in range [1,7])</li>
+			</ul>
+			<li>class.csv: this csv describes the dataset</li>
+			<ul>
+				<li>Class_Number Numeric (integer values in range [1,7])</li>
+				<li>Number
+					<em>Of</em>Animal
+					<em>Species</em>In_Class Numeric
+				</li>
+				<li>Class_Type character -- The actual word description of the class</li>
+				<li>Animal_Names character -- The list of the animals that fall in the category of the class</li>
+			</ul>
+		</ul>
+		<p>These data come from 
+			<a href="https://archive.ics.uci.edu/ml/datasets/Zoo">UCI Machine Learning</a>
+		</p>
+		<h2 id="candidate-elimination-algorithm">Candidate Elimination algorithm</h2>
+		<hr/>
+		<p>It incrementally builds the version space given a hypothesis space H and a set E of examples. The examples are added one by one; each example possibly shrinks the version space by removing the hypotheses that are inconsistent with the example. The candidate elimination algorithm does this by updating the general and specific boundary for each new example. </p>
+		<pre><code>def CandidateEliminationLearner(X,Y,E,H) 
+    Inputs
+        X: set of input features, X={X1,...,Xn} 
+        Y: target feature 
+        E: set of examples from which to learn 
+        H: hypothesis space 
+    Output
+        general boundary G is included in H 
+        specific boundary S is included in H consistent with E 
+    Local
+        G: set of hypotheses in H 
+        S: set of hypotheses in H 
+    Let G={true}, S={false}; 
+    for each e in E do 
+        if ( e is a positive example) then 
+            Elements of G that classify e as negative are removed from G; 
+            Each element s of S that classifies e as negative is removed and replaced by the minimal generalizations of s that classify e as positive and are less general than some member of G; 
+            Non-maximal hypotheses are removed from S; 
+        else
+            Elements of S that classify e as positive are removed from S; 
+            Each element g of G that classifies e as positive is removed and replaced by the minimal specializations of g that classifies e as negative and are more general than some member of S. 
+            Non-minimal hypotheses are removed from G. 
+                    </code></pre>
+		<h2 id="object-implementation">Object implementation</h2>
+		<hr/>
+		<p>
+			<strong>Approach:</strong>
+		</p>
+		<ol>
+			<li>According to the training data there were 7 classes into which animals were classified.</li>
+			<li>In the training data first we considered all the instances with classification as class 1 as positive and rest as negative.</li>
+			<li>Now to generate the specific boundary we first considered only the positive examples and neglected the negative examples. Hence the specific boundary was generated using the Candidate Elimination Algorithm. Then we generated the general boundary considering the negative examples using the algorithm.</li>
+			<li>The same logic was repeated for all the classes.</li>
+		</ol>
+		<p>
+			<strong>Class diagram</strong>
+		</p>
+		<ul>
+			<li>A 
+				<em>CSVDataReader</em> class which implements a 
+				<em>DataReader</em> interface (with a 
+				<em>read</em> method) plays the role of Format 
+				<em>Adapter</em>.
+			</li>
+			<li>A 
+				<em>Context</em> class plays the role of singleton runtime context and has 2 main attributes
+			</li>
+			<ul>
+				<li>the training date</li>
+				<li>the domain attribute set</li>
+			</ul>
+			<li>A 
+				<em>Concept</em> class has two main attributes
+			</li>
+			<ul>
+				<li>genericBoundary is a list of 
+					<em>Hypothesis</em>
+				</li>
+				<li>specificBoundary is an instance of 
+					<em>Hypothesis</em>
+<br/>and 4 methods:
+				</li>
+				<li>a 
+					<em>addTrainingInstance</em> method which takes into account all the lines of training data
+				</li>
+				<li>a 
+					<em>minimalSpecialization</em> method which computes the change of the specific boundary
+				</li>
+				<li>a 
+					<em>displayGenericBoundary</em> method
+				</li>
+				<li>a 
+					<em>displaySpecificBoundary</em> method
+				</li>
+			</ul>
+			<li>An 
+				<em>Hypothesis</em> class which contains a set of attributes called attributes and 4 methods
+			</li>
+			<ul>
+				<li>
+					<em>isConsistent</em> returns true or false whether the current positive classification is the value from 1 to 7 for which we are finding concept hypothesis
+				</li>
+				<li>
+					<em>isLessGeneralThan</em> computes the generalization from: 
+					<em>all</em> -&gt; 
+					<em>value</em> -&gt; 
+					<em>none</em>
+				</li>
+				<li>
+					<em>predictClass</em> returns true or false depending on the attribute value of a given training data
+				</li>
+				<li>
+					<em>score</em> returns an discrete value 
+					<em>ALL, VALUE, NONE</em>
+				</li>
+			</ul>
+		</ul>
+	</body>
+</html>
