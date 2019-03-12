@@ -4,13 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Hypothesis {
-	protected Map<String,Score> attributes;
-
-	/**
-	 * @param attributes
-	 */
+	protected Map<String, Score> attributes;
+	
 	public Hypothesis(final int nbConstraints) {
-		super();
 		this.attributes = new HashMap<>(nbConstraints);
 	}
 
@@ -21,23 +17,23 @@ public class Hypothesis {
 	public void setAttributes(Map<String, Score> attributes) {
 		this.attributes = attributes;
 	}
-	public boolean isConsistent( Map<String,Object> trainingInstance,String classValue) {
+
+	public boolean isConsistent(Map<String, Object> trainingInstance, String classValue) {
 		int predict = -1;
-		for(String key: attributes.keySet()) {
-			final Score s = Scoce.getScore(trainingInstance.get(key).toString());
-			if(attributes.get(key).equals(Score.NONE))
+		for (String key : attributes.keySet()) {
+			final Score s = Score.getScore(trainingInstance.get(key).toString());
+			if(attributes.get(key).equals(Score.NONE)){
 				predict = 0;
-			else if (attributes.get(key).equals(Score.ALL))
+			}			
+			else if(attributes.get(key).equals(Score.ALL)){
 				continue;
-			if(!attributes.get(key).equals(Score.getScore(trainingInstance.get(key).toString()))) {
-				predict  = 0;
-				
+			}
+			if(!attributes.equals(Score.getScore(trainingInstance.get(key).toString()))){
+				predict = 0;
 			}
 			return predict == Integer.parseInt(classValue);
 		}
-		
+				
 		return false;
 	}
-	
-
 }

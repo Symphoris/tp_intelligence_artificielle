@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,13 +38,17 @@ public class CSVDataReader implements DataReader {
 				String[] values = line.split(";");
 				
 				for (int h = 0; h < headers.size(); h++) {
-					if(h< headers.size()-1)
-					instance.put(headers.get(h), values[h]);
+					if(h<headers.size()-1) {
+						instance.put(headers.get(h), values[h]);
+					}
 					else {
-						if(h< values.length-1)
-							instance.put(headers.get(h),Arrays.copyOfRange(values,h,values.length));
-						else 
+						if(h < values.length-1) {
+							instance.put(headers.get(h), Arrays.copyOfRange(values,h,values.length));
+						}
+						else {
 							instance.put(headers.get(h), values[h]);
+						}
+							
 					}
 				}
 				results.add(instance);
@@ -54,12 +57,6 @@ public class CSVDataReader implements DataReader {
 		}else {
 			throw new IOException("Invalid file name");
 		}
-		
-	}
-	
-	public static void main(String[] args) throws IOException {
-		DataReader dr = new CSVDataReader();
-			System.out.println(dr.read("ressources/zoo.csv"));
 		
 	}
 }
