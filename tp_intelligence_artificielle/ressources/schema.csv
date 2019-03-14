@@ -1,0 +1,2 @@
+animal_name;hair;feathers;eggs;milk;airborne;aquatic;predator;toothed;backbone;breathes;venomous;fins;legs;tail;domestic;catsize;class_type
+String;{0,1};{0,1};{0,1};{0,1};{0,1};{0,1};{0,1};{0,1};{0,1};{0,1};{0,1};{0,1};{0,2,4,5,6,8};{0,1};{0,1};{0,1};{1,2,3,4,5,6,7};
