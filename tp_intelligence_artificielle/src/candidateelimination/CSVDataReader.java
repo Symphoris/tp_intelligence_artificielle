@@ -8,22 +8,24 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class CSVDataReader implements DataReader {
 
 	
 	@Override
-	public List<Map<String, Object>> read(String fileName) throws IOException {
+	public List<SortedMap<String, Object>> read(String fileName) throws IOException {
 		Path inputPath = FileSystems.getDefault().getPath(fileName);
 		
 		if(Files.exists(inputPath)) {
 			List<String> lines = Files.readAllLines(inputPath);
-			List<Map<String, Object>> results = new ArrayList<>();
+			List<SortedMap<String, Object>> results = new ArrayList<>();
 			List<String> headers = Arrays.asList(lines.get(0).split(";"));
 			
 			for (int index = 1; index < lines.size(); index++) {
-				Map<String, Object> instance = new TreeMap<>(new Comparator<String>(){
+				
+				SortedMap<String, Object> instance = new TreeMap<>(new Comparator<String>(){
 
 					@Override
 					public int compare(String h1, String h2) {

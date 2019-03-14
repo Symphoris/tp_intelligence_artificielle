@@ -5,21 +5,23 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 
 //Singleton
 public enum Context {
 	instance;
 	
-	protected List<Map<String, Object>> trainingData;
-	protected List<Map<String, Object>> attributeDomains;
-	protected List<Map<String, Object>> classes;
+	protected List<SortedMap<String, Object>> trainingData;
+	protected List<SortedMap<String, Object>> attributeDomains;
+	protected List<SortedMap<String, Object>> classes;
+	protected CSVDataReader reader;
 	
 	Context(){
-		DataReader dr = new CSVDataReader();
+		DataReader reader = new CSVDataReader();
 		try {
-			trainingData = dr.read("ressources/zoo.csv");
-			attributeDomains= dr.read("ressources/schema.csv");
-			classes = dr.read("ressources/class.csv");
+			trainingData = reader.read("ressources/zoo.csv");
+			attributeDomains= reader.read("ressources/schema.csv");
+			classes = reader.read("ressources/class.csv");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -30,13 +32,24 @@ public enum Context {
 		final int start = Integer.parseInt(classes.get(0).get("Class_Number").toString());
 		final int end = Integer.parseInt(classes.get(classes.size() -1).get("Class_Number").toString());
 		for (int i = start; i < end; i++) {
-			System.out.println("Pour la classe "+i+" on classe les expériences");
+			System.out.println("\nPour la classe "+i+" on classe les expériences");
 			//trier les donées d'expérineces de telle sorte que les exemples positifs soient en premier et les contre exmples en dernier
 			Collections.sort(trainingData, new ExperienceComparator(i));
 			Concept concept =new Concept(i);
-			//TODO
-			for (Map<String, Object> instance : trainingData) {
-				
+			//boucler sur toutes les données d'expérience
+			boolean conceptCanBelearned =false;
+			for(SortedMap<String, Object> trainingInstance : trainingData){
+				//TODO concept.addTrainingInstance
+				conceptCanBelearned = concept.addTrainingInstance(trainingInstance);
+				if(!conceptCanBelearned) {
+					System.out.println("Concept ne peut être appris");
+					break;
+				}
+			}
+			System.out.println("conceptCanBeLearned = "+conceptCanBelearned);
+			if(conceptCanBelearned) {
+				concept.printSpecificBoudary();
+				concept.printGenericBoundary();
 			}
 		}
 		
